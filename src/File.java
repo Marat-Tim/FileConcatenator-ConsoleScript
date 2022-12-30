@@ -27,13 +27,13 @@ class File {
      *
      * @return Все зависимости данного файла.
      */
-    Set<String> getDependencies() throws IOException {
+    Set<File> getDependencies() throws IOException {
         var lines = Files.readAllLines(Path.of(path));
-        Set<String> dependencies = new HashSet<>();
+        Set<File> dependencies = new HashSet<>();
         for (var line : lines) {
             if (line.startsWith(Constants.REQUIRE_COMMAND)) {
-                dependencies.add(
-                        line.substring(Constants.REQUIRE_COMMAND.length() + 1, line.indexOf('\n')));
+                dependencies.add(new File(
+                        line.substring(Constants.REQUIRE_COMMAND.length() + 1, line.indexOf('\n'))));
             }
         }
         return dependencies;

@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -53,8 +52,8 @@ class Directory {
      *
      * @return Файлы из данной папки и всех ее подпапок.
      */
-    Collection<File> getAllFiles() {
-        List<File> files = new ArrayList<>();
+    Set<File> getAllFiles() {
+        Set<File> files = new HashSet<>();
         addAllFilesToList(files);
         return files;
     }
@@ -64,7 +63,7 @@ class Directory {
      *
      * @param files Список, куда надо добавить файлы.
      */
-    private void addAllFilesToList(List<File> files) {
+    private void addAllFilesToList(Set<File> files) {
         files.addAll(getFiles());
         for (var directory : getDirectories()) {
             files.addAll(directory.getAllFiles());
