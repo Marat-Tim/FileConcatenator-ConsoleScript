@@ -1,10 +1,10 @@
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 class File {
     private final String path;
@@ -28,16 +28,29 @@ class File {
      * @return Все зависимости данного файла.
      */
     Set<File> getDependencies() throws IOException {
-        var lines = Files.readAllLines(Path.of(path));
+        List<String> lines = Files.readAllLines(Path.of(path));
         Set<File> dependencies = new HashSet<>();
-        for (var line : lines) {
+        for (String line : lines) {
             if (line.startsWith(Constants.REQUIRE_COMMAND)) {
-                dependencies.add(new File(
-                        line.substring(Constants.REQUIRE_COMMAND.length() + 1, line.indexOf('\n'))));
+                dependencies.add(
+                        new File(line.substring(line.indexOf('‘'), line.lastIndexOf('’'))));
             }
         }
         return dependencies;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (hashCode() != o.hashCode()) {
+            return false;
+        }
+        return Objects.equals(path, ((File) o).path);
+    }
 
+    @Override
+    public int hashCode() {
+        return path.hashCode();
+    }
 }

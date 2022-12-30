@@ -12,11 +12,12 @@ public class UI {
         String path = SCANNER.nextLine();
         Concatenator concatenator = new Concatenator(path);
         try {
+            System.out.println(concatenator.getSortedFileList());
             System.out.println(concatenator.concatenate());
         } catch (IOException e) {
             System.out.println("Ошибка при работе с файлами!\n" + e.getMessage());
         } catch (RequireException e) {
-            throw new RuntimeException("Найдена циклическая зависимость!\n" + e.getMessage());
+            System.out.println("Найдена циклическая зависимость!\n");
         }
     }
 }

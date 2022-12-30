@@ -29,7 +29,7 @@ public class Concatenator {
         return text.toString();
     }
 
-    private List<File> getSortedFileList() throws IOException, RequireException {
+    public List<File> getSortedFileList() throws IOException, RequireException {
         Directory root = new Directory(path);
         Set<File> allFiles = root.getAllFiles();
         Set<File> processedFiles = new HashSet<>();
@@ -42,6 +42,7 @@ public class Concatenator {
                     files.add(file);
                     allFiles.remove(file);
                     didAdd = true;
+                    break;
                 }
             }
             if (!didAdd) {
