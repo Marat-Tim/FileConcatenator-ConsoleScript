@@ -9,12 +9,8 @@ import java.util.regex.Pattern;
 class File {
     private final String path;
 
-    File(String path) throws FileNotFoundException {
-        if (new java.io.File(path).exists()) {
-            this.path = path;
-        } else {
-            throw new FileNotFoundException("Файла по такому пути не существует");
-        }
+    File(String path) {
+        this.path = path;
     }
 
     /**
