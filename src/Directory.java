@@ -1,8 +1,19 @@
+import java.nio.file.Path;
 import java.util.*;
 
+/**
+ * Обертка над путем к папке.
+ */
 class Directory {
+
+    /**
+     * Путь к папке
+     */
     private final String path;
 
+    /**
+     * @param path Путь к папке.
+     */
     Directory(String path) {
         this.path = path;
     }

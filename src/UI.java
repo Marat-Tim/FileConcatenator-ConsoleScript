@@ -4,7 +4,14 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Отвечает за консольный интерфейс.
+ */
 public final class UI {
+
+    /**
+     * Штука для считывания информации с консоли.
+     */
     private static final Scanner SCANNER = new Scanner(System.in);
 
     /**
