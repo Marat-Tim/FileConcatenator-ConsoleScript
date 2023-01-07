@@ -10,16 +10,17 @@ class Directory {
     /**
      * Возвращает все файлы из данной папки.
      *
+     * @param relativeWhat Относительно чего хранить пути до файлов.
      * @return Все файлы из данной папки.
      */
-    Collection<File> getFiles() {
+    Collection<File> getFiles(String relativeWhat) {
         List<File> files = new ArrayList<>();
         for (var
                 file :
                 Optional.ofNullable(new java.io.File(path).listFiles()).
                         orElse(new java.io.File[]{})) {
             if (!file.isDirectory()) {
-                files.add(new File(file.getPath()));
+                files.add(new File(file.getPath(), relativeWhat));
             }
         }
         return files;
@@ -50,19 +51,20 @@ class Directory {
      */
     Set<File> getAllFiles() {
         Set<File> files = new HashSet<>();
-        addAllFilesToList(files);
+        addAllFilesToList(files, path);
         return files;
     }
 
     /**
      * Добавляет в список все файлы из текущей папки и из всех ее подпапок.
      *
-     * @param files Список, куда надо добавить файлы.
+     * @param files        Список, куда надо добавить файлы.
+     * @param relativeWhat Относительно чего хранить пути до файлов.
      */
-    private void addAllFilesToList(Set<File> files) {
-        files.addAll(getFiles());
+    private void addAllFilesToList(Set<File> files, String relativeWhat) {
+        files.addAll(getFiles(relativeWhat));
         for (var directory : getDirectories()) {
-            files.addAll(directory.getAllFiles());
+            directory.addAllFilesToList(files, relativeWhat);
         }
     }
 }

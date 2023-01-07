@@ -18,10 +18,10 @@ public class Concatenator {
      * зависит от файла A, то файл A стоит раньше файла B.
      */
     public String concatenate() throws IOException, RequireException {
-        return concatenateFiles(getSortedFileList());
+        return concatenateTextOfFiles(getSortedFileList());
     }
 
-    private String concatenateFiles(List<File> files) throws IOException {
+    private String concatenateTextOfFiles(List<File> files) throws IOException {
         StringBuilder text = new StringBuilder();
         for (var file : files) {
             text.append(file.getText());

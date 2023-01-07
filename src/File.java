@@ -1,16 +1,20 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 class File {
-    private final String path;
+    private Path path;
+
+    private final Path relativePath;
 
     File(String path) {
-        this.path = path;
+        this.relativePath = Path.of(path);
+    }
+
+    File(String path, String relativeWhat) {
+        this.path = Path.of(path);
+        this.relativePath = Path.of(relativeWhat).relativize(this.path);
     }
 
     /**
@@ -19,7 +23,7 @@ class File {
      * @return Весь текст из файла.
      */
     String getText() throws IOException {
-        return Files.readString(Path.of(path));
+        return Files.readString(path);
     }
 
     /**
@@ -28,12 +32,14 @@ class File {
      * @return Все зависимости данного файла.
      */
     Set<File> getDependencies() throws IOException {
-        List<String> lines = Files.readAllLines(Path.of(path));
+        List<String> lines = Files.readAllLines(path);
         Set<File> dependencies = new HashSet<>();
         for (String line : lines) {
             if (line.startsWith(Constants.REQUIRE_COMMAND)) {
-                dependencies.add(
-                        new File(line.substring(line.indexOf('‘'), line.lastIndexOf('’'))));
+                String path = line.substring(
+                        line.indexOf(Constants.REQUIRE_START_PATH_SYMBOL) + 1,
+                        line.lastIndexOf(Constants.REQUIRE_END_PATH_SYMBOL));
+                dependencies.add(new File(path));
             }
         }
         return dependencies;
@@ -46,11 +52,16 @@ class File {
         if (hashCode() != o.hashCode()) {
             return false;
         }
-        return Objects.equals(path, ((File) o).path);
+        return relativePath.equals(((File) o).relativePath);
     }
 
     @Override
     public int hashCode() {
-        return path.hashCode();
+        return relativePath.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return relativePath.toString();
     }
 }
