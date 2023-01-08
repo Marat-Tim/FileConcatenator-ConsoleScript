@@ -1,7 +1,8 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -28,10 +29,12 @@ class Directory {
      * @return Файлы из данной папки и всех ее подпапок.
      */
     Set<File> getAllFiles() throws IOException {
-        Set<Path> allPaths = Files.walk(path).collect(Collectors.toSet());
+        Set<Path> allPaths = Files.walk(path).
+                filter(filePath -> !Files.isDirectory(filePath)).
+                collect(Collectors.toSet());
         Set<File> allFiles = new HashSet<>();
-        for (Path path : allPaths) {
-            allFiles.add(new File(path.toString(), path.toString()));
+        for (Path filePath : allPaths) {
+            allFiles.add(new File(path.toString(), path.relativize(filePath).toString()));
         }
         return allFiles;
     }
