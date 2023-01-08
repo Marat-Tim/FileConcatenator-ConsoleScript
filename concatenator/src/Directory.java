@@ -1,5 +1,8 @@
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Обертка над путем к папке.
@@ -9,52 +12,13 @@ class Directory {
     /**
      * Путь к папке
      */
-    private final String path;
+    private final Path path;
 
     /**
      * @param path Путь к папке.
      */
     Directory(String path) {
-        this.path = path;
-    }
-
-    /**
-     * Возвращает все файлы из данной папки.
-     *
-     * @param relativeWhat Относительно чего хранить пути до файлов.
-     * @return Все файлы из данной папки.
-     */
-    Collection<File> getFiles(String relativeWhat) {
-        List<File> files = new ArrayList<>();
-        for (java.io.File
-                file :
-                Optional.ofNullable(new java.io.File(path).listFiles()).
-                        orElse(new java.io.File[]{})) {
-            if (!file.isDirectory()) {
-                files.add(new File(
-                        relativeWhat,
-                        Path.of(relativeWhat).relativize(file.toPath()).toString()));
-            }
-        }
-        return files;
-    }
-
-    /**
-     * Возвращает все папки, находящиеся в данной папке.
-     *
-     * @return Все папки, находящиеся в данной папке.
-     */
-    Collection<Directory> getDirectories() {
-        List<Directory> directories = new ArrayList<>();
-        for (var
-                file :
-                Optional.ofNullable(new java.io.File(path).listFiles()).
-                        orElse(new java.io.File[]{})) {
-            if (file.isDirectory()) {
-                directories.add(new Directory(file.getPath()));
-            }
-        }
-        return directories;
+        this.path = Path.of(path);
     }
 
     /**
@@ -63,22 +27,12 @@ class Directory {
      *
      * @return Файлы из данной папки и всех ее подпапок.
      */
-    Set<File> getAllFiles() {
-        Set<File> files = new HashSet<>();
-        addAllFilesToList(files, path);
-        return files;
-    }
-
-    /**
-     * Добавляет в список все файлы из текущей папки и из всех ее подпапок.
-     *
-     * @param files        Список, куда надо добавить файлы.
-     * @param relativeWhat Относительно чего хранить пути до файлов.
-     */
-    private void addAllFilesToList(Set<File> files, String relativeWhat) {
-        files.addAll(getFiles(relativeWhat));
-        for (var directory : getDirectories()) {
-            directory.addAllFilesToList(files, relativeWhat);
+    Set<File> getAllFiles() throws IOException {
+        Set<Path> allPaths = Files.walk(path).collect(Collectors.toSet());
+        Set<File> allFiles = new HashSet<>();
+        for (Path path : allPaths) {
+            allFiles.add(new File(path.toString(), path.toString()));
         }
+        return allFiles;
     }
 }
