@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +39,22 @@ public class Concatenator {
     }
 
     /**
+     * Сортирует все файлы так, что если файл B зависит от файла A, то файл A будет раньше файла B.
+     *
+     * @return Лист с отсортированными путями к файлам.
+     * @throws IOException      Если есть проблема в работе с файлами.
+     * @throws RequireException Если есть проблема с зависимостями.
+     */
+    public List<Path> getSortedPathList() throws IOException, RequireException {
+        List<File> sortedFileList = getSortedFileList();
+        List<Path> sortedPathList = new ArrayList<>(sortedFileList.size());
+        for (File file : sortedFileList) {
+            sortedPathList.add(file.getRelativePath());
+        }
+        return sortedPathList;
+    }
+
+    /**
      * Соединяет тексты всех файлов.
      *
      * @param files Файлы, содержимые которых нужно объединить.
@@ -59,7 +76,7 @@ public class Concatenator {
      * @throws IOException      Если есть проблема в работе с файлами.
      * @throws RequireException Если есть проблема с зависимостями.
      */
-    public List<File> getSortedFileList() throws IOException, RequireException {
+    private List<File> getSortedFileList() throws IOException, RequireException {
         Directory root = new Directory(path);
         Set<File> allFiles = root.getAllFiles();
         Set<File> processedFiles = new HashSet<>();

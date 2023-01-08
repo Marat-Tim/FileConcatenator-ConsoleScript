@@ -21,7 +21,7 @@ public final class UI {
         String path = inputDirectoryPath();
         Concatenator concatenator = new Concatenator(path);
         try {
-            List<File> sortedFileList = concatenator.getSortedFileList();
+            List<Path> sortedFileList = concatenator.getSortedPathList();
             for (int i = 1; i <= sortedFileList.size(); i++) {
                 System.out.printf("%d. %s\n", i, sortedFileList.get(i - 1));
             }
