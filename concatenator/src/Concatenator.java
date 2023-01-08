@@ -33,7 +33,7 @@ public class Concatenator {
      * зависит от файла A, то файл A стоит раньше файла B.
      * @throws IOException      Если есть проблема в работе с файлами.
      * @throws RequireException Если есть проблема с зависимостями
-     * (циклическая зависимость или зависимость от несуществующего файла).
+     *                          (циклическая зависимость или зависимость от несуществующего файла).
      */
     public String concatenate() throws IOException, RequireException {
         return concatenateTextOfFiles(getSortedFileList());
@@ -76,7 +76,7 @@ public class Concatenator {
      * @return Лист с отсортированными файлами.
      * @throws IOException      Если есть проблема в работе с файлами.
      * @throws RequireException Если есть проблема с зависимостями.
-     * (циклическая зависимость или зависимость от несуществующего файла).
+     *                          (циклическая зависимость или зависимость от несуществующего файла).
      */
     private List<File> getSortedFileList() throws IOException, RequireException {
         Directory root = new Directory(path);
@@ -95,7 +95,8 @@ public class Concatenator {
                 }
             }
             if (!didAdd) {
-                throw new RequireException("Циклическая зависимость");
+                throw new RequireException(
+                        "Циклическая зависимость\nПроблема со следующими файлами:\n" + allFiles);
             }
         }
         return files;
