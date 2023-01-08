@@ -1,3 +1,4 @@
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -25,12 +26,14 @@ class Directory {
      */
     Collection<File> getFiles(String relativeWhat) {
         List<File> files = new ArrayList<>();
-        for (var
+        for (java.io.File
                 file :
                 Optional.ofNullable(new java.io.File(path).listFiles()).
                         orElse(new java.io.File[]{})) {
             if (!file.isDirectory()) {
-                files.add(new File(file.getPath(), relativeWhat));
+                files.add(new File(
+                        relativeWhat,
+                        Path.of(relativeWhat).relativize(file.toPath()).toString()));
             }
         }
         return files;
@@ -55,7 +58,8 @@ class Directory {
     }
 
     /**
-     * Возвращает файлы из данной папки и всех ее подпапок. Пути к файлам идут относительно данной папки.
+     * Возвращает файлы из данной папки и всех ее подпапок.
+     * Пути к файлам идут относительно данной папки.
      *
      * @return Файлы из данной папки и всех ее подпапок.
      */

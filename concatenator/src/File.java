@@ -11,29 +11,31 @@ import java.util.Set;
 class File {
 
     /**
-     * Путь к файлу.
+     * Путь к рабочей папке.
      */
-    private Path path;
+    private final Path workingDirectory;
 
     /**
-     * Путь к файлу, относительно рабочей папки.
+     * Путь к файлу относительно рабочей папки.
      */
     private final Path relativePath;
 
     /**
-     * @param relativePath Путь к файлу, относительно рабочей папки.
+     * @param workingDirectory Рабочая папка.
+     * @param relativePath     Путь к файлу относительно рабочей папки.
      */
-    File(String relativePath) {
+    File(String workingDirectory, String relativePath) {
+        this.workingDirectory = Path.of(workingDirectory);
         this.relativePath = Path.of(relativePath);
     }
 
     /**
-     * @param path         Путь к файлу.
-     * @param relativeWhat Путь к файлу, относительно рабочей папки.
+     * Возвращает полный путь к файлу.
+     *
+     * @return Полный путь к файлу.
      */
-    File(String path, String relativeWhat) {
-        this.path = Path.of(path);
-        this.relativePath = Path.of(relativeWhat).relativize(this.path);
+    private Path getFullPath() {
+        return new java.io.File(workingDirectory.toFile(), relativePath.toString()).toPath();
     }
 
     /**
@@ -52,24 +54,29 @@ class File {
      * @throws IOException Если есть проблема в работе с файлами.
      */
     String getText() throws IOException {
-        return Files.readString(path);
+        return Files.readString(getFullPath());
     }
 
     /**
      * Возвращает все зависимости данного файла в виде множества.
      *
      * @return Все зависимости данного файла.
-     * @throws IOException Если есть проблема в работе с файлами.
+     * @throws IOException      Если есть проблема в работе с файлами.
+     * @throws RequireException Если есть зависимость от несуществующего файла.
      */
-    Set<File> getDependencies() throws IOException {
-        List<String> lines = Files.readAllLines(path);
+    Set<File> getDependencies() throws IOException, RequireException {
+        List<String> lines = Files.readAllLines(getFullPath());
         Set<File> dependencies = new HashSet<>();
         for (String line : lines) {
             if (line.startsWith(Constants.REQUIRE_COMMAND)) {
                 String path = line.substring(
                         line.indexOf(Constants.REQUIRE_START_PATH_SYMBOL) + 1,
                         line.lastIndexOf(Constants.REQUIRE_END_PATH_SYMBOL));
-                dependencies.add(new File(path));
+                File dependency = new File(workingDirectory.toString(), path);
+                if (!Files.exists(dependency.getFullPath())) {
+                    throw new RequireException("Зависимость от несуществующего файла");
+                }
+                dependencies.add(dependency);
             }
         }
         return dependencies;
